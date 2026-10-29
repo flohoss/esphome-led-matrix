@@ -1,0 +1,37 @@
+{
+  // ESPHome's custom YAML tags; undeclared ones raise "Unresolved tag".
+  "yaml.customTags": [
+    "!secret scalar",
+    "!env_var scalar",
+    "!include scalar",
+    "!include_dir_list scalar",
+    "!include_dir_named scalar",
+    "!include_dir_merge_list scalar",
+    "!include_dir_merge_named scalar",
+    "!lambda scalar",
+    // !extend / !remove take a scalar, a list or a mapping.
+    "!extend scalar",
+    "!extend sequence",
+    "!extend mapping",
+    "!remove scalar",
+    "!remove sequence",
+    "!remove mapping"
+  ],
+  "yaml.validate": true,
+  "yaml.format.enable": true,
+
+  // Hide ESPHome build output.
+  "files.exclude": {
+    ".esphome/": true
+  },
+  "search.exclude": {
+    ".esphome/": true
+  },
+
+  // README keeps one sentence per line: no hard wrapping, so the soft wrap does
+  // the visual work and a formatter must not re-wrap (see .prettierrc.json).
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.rulers": []
+  }
+}

@@ -1,0 +1,145 @@
+# Material Design Icons, curated.
+#
+# 101 icons taken from the MDI 7447-icon set but baked individually so flash
+# stays small: the whole set costs ~590 kB and takes the image to 82% of the app
+# partition, these cost ~4 kB.
+#
+# The webfont is vendored next to this file instead of fetched at build time, so
+# builds are offline and reproducible: @mdi/font 7.4.47 from npm, Apache 2.0,
+# sha256 61e8aba5a4e981fe22cf7c8e8bcdbea00476e75c62c37f01bf7ee33361d68428.
+# To refresh, bump the version and pull just the face out of the npm package:
+#   docker run --rm -v "$PWD/icons:/out" -w /out node:lts sh -c \
+#     'npm pack @mdi/font@7.4.47 >/dev/null && tar -xzf mdi-font-*.tgz \
+#      --strip-components=2 package/fonts/materialdesignicons-webfont.ttf'
+# Paths resolve against the ESPHome config dir, not this file, hence `icons/`.
+#
+# To add an icon, append its codepoint below and add the display name to
+# `Panel Icon` in led-matrix.yaml, keeping the two lists in the same order.
+# Find the codepoint at https://pictogrammers.com/library/mdi/ -- it is the
+# `F....` value, written here as \U000F....
+font:
+  # Size 26 is the "hero" size used by the Icon scene, where the glyph has the
+  # whole 32px panel to itself.
+  - file: icons/materialdesignicons-webfont.ttf
+    id: font_icons
+    size: 26
+    glyphs: &icon_glyphs # Household
+      - "\U000F072A" # washing-machine
+      - "\U000F0AAC" # dishwasher
+      - "\U000F0176" # coffee
+      - "\U000F0290" # fridge
+      - "\U000F081C" # door-open
+      - "\U000F081B" # door-closed
+      - "\U000F05B1" # window-open
+      - "\U000F02E3" # bed
+      - "\U000F00E2" # broom
+      - "\U000F070D" # robot-vacuum
+      - "\U000F0A70" # silverware-fork-knife
+      - "\U000F09A0" # shower
+      - "\U000F09AB" # toilet
+      - "\U000F04B9" # sofa
+      # People
+      - "\U000F0849" # account-group
+      - "\U000F0004" # account
+      - "\U000F000E" # account-multiple
+      - "\U000F0E7D" # baby-face-outline
+      - "\U000F064D" # human-male
+      - "\U000F0649" # human-female
+      - "\U000F1821" # hand-wave
+      # Devices
+      - "\U000F0322" # laptop
+      - "\U000F011C" # cellphone
+      - "\U000F05A9" # wifi
+      - "\U000F0079" # battery
+      - "\U000F0084" # battery-charging
+      - "\U000F06A5" # power-plug
+      - "\U000F048B" # server
+      - "\U000F0502" # television
+      - "\U000F04C3" # speaker
+      - "\U000F02CB" # headphones
+      # Time
+      - "\U000F0954" # clock
+      - "\U000F0150" # clock-outline
+      - "\U000F00ED" # calendar
+      - "\U000F0020" # alarm
+      - "\U000F13AB" # timer
+      - "\U000F009A" # bell
+      - "\U000F009E" # bell-ring
+      # Weather
+      - "\U000F0599" # weather-sunny
+      - "\U000F0595" # weather-partly-cloudy
+      - "\U000F0590" # weather-cloudy
+      - "\U000F0597" # weather-rainy
+      - "\U000F0598" # weather-snowy
+      - "\U000F0591" # weather-fog
+      - "\U000F067E" # weather-lightning-rainy
+      - "\U000F0594" # weather-night
+      - "\U000F0596" # weather-pouring
+      - "\U000F059D" # weather-windy
+      - "\U000F054A" # umbrella
+      - "\U000F050F" # thermometer
+      # Transport
+      - "\U000F010B" # car
+      - "\U000F00A3" # bike
+      - "\U000F00E7" # bus
+      - "\U000F052C" # train
+      - "\U000F001D" # airplane
+      - "\U000F03D3" # package
+      - "\U000F06EE" # mailbox
+      - "\U000F034E" # map-marker
+      - "\U000F0298" # gas-station
+      # Status
+      - "\U000F0026" # alert
+      - "\U000F0028" # alert-circle
+      - "\U000F0029" # alert-octagon
+      - "\U000F05E0" # check-circle
+      - "\U000F0159" # close-circle
+      - "\U000F02FC" # information
+      - "\U000F02D7" # help-circle
+      - "\U000F0565" # shield-check
+      - "\U000F033E" # lock
+      - "\U000F0306" # key
+      # Leisure
+      - "\U000F00E9" # cake
+      - "\U000F1056" # party-popper
+      - "\U000F075A" # music
+      - "\U000F0381" # movie
+      - "\U000F0297" # gamepad-variant
+      - "\U000F0830" # poker-chip
+      - "\U000F0876" # glass-wine
+      - "\U000F0422" # popcorn
+      # Seasonal
+      - "\U000F0BBF" # pumpkin
+      - "\U000F02A0" # ghost
+      - "\U000F04B7" # snowman
+      - "\U000F0405" # pine-tree
+      - "\U000F0E44" # gift
+      - "\U000F0717" # snowflake
+      - "\U000F05E2" # candle
+      - "\U000F04CE" # star
+      - "\U000F010A" # candycane
+      - "\U000F04DA" # stocking
+      # Health
+      - "\U000F02D1" # heart
+      - "\U000F05F6" # heart-pulse
+      - "\U000F06EF" # medical-bag
+      - "\U000F0402" # pill
+      - "\U000F04B2" # sleep
+      - "\U000F070E" # run
+      - "\U000F01E6" # dumbbell
+      - "\U000F032A" # leaf
+      # Shopping
+      - "\U000F01AD" # currency-eur
+      - "\U000F0110" # cart
+      - "\U000F0114" # cash
+      - "\U000F0FEF" # credit-card
+      - "\U000F0824" # receipt
+      - "\U000F046F" # sale
+
+  # Size 20 is the "inline" size: the Weather and Message scenes need room above
+  # a caption, and this face's worst-case ink bottom is row 18 instead of 24.
+  # Same glyph list, via a YAML anchor, so adding an icon still means one edit.
+  - file: icons/materialdesignicons-webfont.ttf
+    id: font_icons_inline
+    size: 20
+    glyphs: *icon_glyphs

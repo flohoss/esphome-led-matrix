@@ -1,0 +1,7 @@
+.DS_Store
+secrets.yaml
+.esphome/
+
+# Python bytecode from the local component (imported at build time).
+__pycache__/
+*.py[cod]

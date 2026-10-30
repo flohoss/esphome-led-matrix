@@ -149,13 +149,22 @@ font:
     glyphsets: *latin_glyphsets
     glyphs: *german_glyphs
   # Monospace for the clock and the weather temperature, so every digit advances
-  # the same em and neither twitches as values change. The colon and the degree
-  # are hand-drawn: at this size the colon is a 3x3 smear and the degree a
-  # ragged 6x5 blob.
-  - file: gfonts://Roboto Mono@bold
+  # the same em and neither twitches as values change. Medium, not bold: bold at
+  # 20px rasterises '8' with its lower loop 1px wider than its upper, so the
+  # digit steps out past its neighbours. Regular fixes that but drops to 1px
+  # hairlines on 0/4/5/9. The colon and the degree are hand-drawn: at this size
+  # the colon is a 3x3 smear and the degree a ragged 6x5 blob. See README.md.
+  - file: gfonts://Roboto Mono@medium
     id: font_clock
     size: 20
     glyphs: '0123456789-'
+  # The clock's date line. Roboto at 10px rasterises '0' without its right-hand
+  # corner pixels, which reads as an oval leaning left; 12px is round. Condensed
+  # at 12px keeps the widest date inside 64px. See README.md.
+  - file: gfonts://Roboto Condensed
+    id: font_date
+    size: 12
+    glyphs: ' .0123456789ADFJMNOSabegiklnoprtuvwzä'
 
 # -----------------------------------------------------------------------------
 # Animated art -- GIFs split into 1-bit frames at compile time.

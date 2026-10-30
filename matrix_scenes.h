@@ -96,8 +96,9 @@ inline void draw_clock(display::Display &it, Color foreground) {
   if (now.is_valid()) {
     // %H is 00-23, so no AM/PM and no locale surprises.
     snprintf(time_buf, sizeof(time_buf), "%02u:%02u", (unsigned) now.hour, (unsigned) now.minute);
-    // day_of_week is 1-7 with sunday = 1, so index it with -1. The month is
-    // spelled short: the widest case, "Sa 31. Dez.", is 49px of the 64px panel.
+    // day_of_week is 1-7 with sunday = 1, so index it with -1. Months are
+    // spelled short but not abbreviated: the widest case, "Mo 31. März", is
+    // 59px of the 64px panel in the condensed 12px date face.
     static const char *const WEEKDAYS[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
     static const char *const MONTHS[] = {"Jan",  "Feb", "März", "Apr", "Mai", "Juni",
                                          "Juli", "Aug", "Sept", "Okt", "Nov", "Dez"};
@@ -112,53 +113,52 @@ inline void draw_clock(display::Display &it, Color foreground) {
 
   // Every number below is a measured glyph metric, not a guess:
   //
-  //   Roboto Mono bold 20   digits 14px of ink, offset_y 7, advance 12,
-  //                         10px of ink starting at offset_x 1
-  //   Roboto 10             capheight 7, baseline 10, so the capital band is
-  //                         offset_y 3..10. Descenders (Apr, Aug, Sept) hang
+  //   Roboto Mono 20   digits 15px high in a 12px advance, ink 6-10px wide,
+  //                    offset_y 6. Medium weight: bold rasterises '8' with a
+  //                    lower loop 1px wider than its upper, so the digit steps
+  //                    out past its neighbours; regular fixes that but drops to
+  //                    1px hairlines on 0/4/5/9. See README.md.
+  //   Roboto Condensed 12   capheight 9, baseline 12, so the capital band is
+  //                         offset_y 3..11. Descenders (Apr, Aug, Sept) hang
   //                         below that baseline, which is what a real clock
   //                         face does; the caps stay put day to day.
+  //
+  // The date has its own face (font_date) because Roboto at 10px cannot draw a
+  // round zero, and 12px Roboto is too wide for "Mo 31. März". See README.md.
   //
   // The two blocks are laid out as ONE group centred in the 32px panel, each
   // offset by its own ink top. The date is pinned to its cap band rather than
   // to whatever ink today's string happens to have, so the time never moves
   // and only genuine descenders reach lower.
   //
-  // The gap is 3px, not 2px, on purpose: digit ink (14) + caps (7) is odd, so
-  // an even group -- and therefore an exact top/bottom split -- needs an odd
-  // gap. 14 + 3 + 7 = 24 leaves 4px above and 4px below.
+  // Gap 2: digit ink (15) + caps (9) is even, so an even gap keeps the group
+  // even and the top/bottom split exact. 15 + 2 + 9 = 26 leaves 3px above and
+  // 3px below, with descenders using one of the lower rows.
   const font::Glyph *digit_glyph = font_clock->find_glyph((uint32_t) '0');
   const int cell = digit_glyph != nullptr ? digit_glyph->advance : 12;
-  const int ink_left = digit_glyph != nullptr ? digit_glyph->offset_x : 1;
-  const int ink_w = digit_glyph != nullptr ? digit_glyph->width : 10;
-  const int ink_top = digit_glyph != nullptr ? digit_glyph->offset_y : 7;
-  const int ink_h = digit_glyph != nullptr ? digit_glyph->height : 14;
+  const int ink_top = digit_glyph != nullptr ? digit_glyph->offset_y : 6;
+  const int ink_h = digit_glyph != nullptr ? digit_glyph->height : 15;
 
-  font::Font *date_font = font_small;
+  font::Font *date_font = font_date;
   const int date_cap_top = date_font->get_baseline() - date_font->get_capheight();
   const int date_cap_h = date_font->get_capheight();
 
-  const int gap = 3;
+  const int gap = 2;
   const int group_h = ink_h + gap + date_cap_h;
   const int group_top = (PANEL_H - group_h) / 2;
   const int time_y = group_top - ink_top;
   const int date_y = group_top + ink_h + gap - date_cap_top;
 
-  // Horizontal layout in ink space, relative to the first digit's ink, so the
-  // offsets do not depend on glyph bearings:
-  //
-  //   digit0 0..9  digit1 12..21  colon 24..25  digit2 28..37  digit3 40..49
-  //
-  // Every gap is 2px, which stops the colon floating in the middle of a cell.
+  // Horizontal layout. The four digits are monospaced, so they are laid out on
+  // a fixed grid of cells rather than on ink: every glyph draws inside its own
+  // 12px cell, so centring the grid centres the time for every value.
   const int colon_w = 2;
   const int colon_gap = 2;
-  const int colon_off = cell + ink_w + colon_gap;
-  const int right_off = colon_off + colon_w + colon_gap;
-  const int time_ink_w = right_off + cell + ink_w;
-  const int time_ink_x = (PANEL_W - time_ink_w) / 2;
-  const int time_x = time_ink_x - ink_left;
-  const int colon_x = time_ink_x + colon_off;
-  const int right_pen = time_x + right_off;
+  const int grid_w = 4 * cell + 2 * colon_gap + colon_w;
+  const int grid_x = (PANEL_W - grid_w) / 2;
+  const int time_x = grid_x;
+  const int colon_x = grid_x + 2 * cell + colon_gap;
+  const int right_pen = colon_x + colon_w + colon_gap;
 
   char digit_buf[2] = {'\0', '\0'};
   digit_buf[0] = time_buf[0];
@@ -191,9 +191,9 @@ inline void draw_clock(display::Display &it, Color foreground) {
 //
 // Measured, not guessed:
 //
-//   MDI 26               cloud 19x11  sun 15x15  snow 19x17  night 17x17,
-//                        offset_x 0-3, so ink is placed by cancelling bearings
-//   Roboto Mono 20 bold  digit ink 7-10px, offset_y 6, uniform 12px advance
+//   MDI 26               sunny 19x21  cloudy 24x15  snowy 24x23  rainy 24x21,
+//                        offset_x 1-4, so ink is placed by cancelling bearings
+//   Roboto Mono 20       digit ink 6-10px, offset_y 6, uniform 12px advance
 //
 // font_clock keeps the digits monospaced: proportional digits would re-space
 // the pair on every update. The degree is hand-drawn, the same reason the
@@ -285,10 +285,10 @@ inline void draw_weather(display::Display &it, Color foreground) {
   }
   const int digits_ink = digits_advance - digits_left - digits_right;
 
-  // Widest case measured from the generated glyph tables: "-99" is 32px of
-  // digit ink, so 32 + 2 + 4 = 38 with the ring, plus the widest icon (19px)
-  // and a 2px gutter gives 59 of the 64px panel. "100" would need 60 for the
-  // same reason, which is why the clamp is -99..99.
+  // Widest case measured from the generated glyph tables: "-99" is 31px of
+  // digit ink, so 31 + 2 + 4 = 37 with the ring, plus the widest weather icon
+  // (24px) and a 2px gutter gives 63 of the 64px panel. "100" would need the
+  // whole 64px with nothing to spare, which is why the clamp is -99..99.
   const int DEGREE_W = 4;
   const int DEGREE_GAP = 2;
   const int ICON_GAP = 2;

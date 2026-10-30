@@ -69,6 +69,13 @@ Umlauts are listed explicitly because the default `GF_Latin_Kernel` glyphset has
 Note that `glyphs:` _replaces_ the default set, so the glyphset has to be named alongside it.
 No emoji, deliberately: Noto Emoji is an outline face, so it renders monochrome on an RGB panel, and colour emoji only exist as COLR/SVG or bitmap fonts, which ESPHome cannot rasterise into a 1-bit glyph table.
 The clock and temperature use Roboto Mono, so every digit advances the same em and neither twitches as values change.
+The face is medium rather than bold: at 20px bold rasterises `8` with its lower loop one pixel wider than its upper, so the bottom of the `8` steps out past the column every other digit stops at, which reads as a digit leaking into the neighbouring cell.
+Regular fixes the `8` but drops `0`, `4`, `5` and `9` to one-pixel hairlines and breaks the top-left stroke of `6`; medium is the lightest weight with no single-pixel stems.
+
+**The clock's date line has its own face.** `font_date` is Roboto Condensed at 12px, not one of the eight shared sizes.
+At 10px Roboto rasterises `0` as a 4px ring whose top-right and bottom-right corner pixels fall outside the 1-bit threshold, so the glyph is not mirror-symmetric inside its advance cell and reads as an oval leaning left; 12px rasterises a clean symmetric ring.
+Condensed at 12px is what keeps the widest date ("Mo 31. März", 59px) inside the 64px panel — plain Roboto needs 66px at the same size and would clip.
+Only the 37 glyphs the date line can print are baked, so the extra face costs about as much flash as one of the shared sizes.
 
 **Hand-drawn colon and degree.** At 20px the font rasterises the colon as a 3×3 smear per dot and `°` as a ragged 6×5 blob, so the clock draws two 2×2 rectangles and the weather scene a 4×4 ring.
 
